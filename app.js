@@ -1,6 +1,8 @@
 import express from "express";
 import sequelize from "./src/config/database.js";
 import dotenv from "dotenv";
+import moviesRouters from "./src/routes/movie.routes.js";
+
 dotenv.config();
 
 const app = express();
@@ -19,3 +21,4 @@ sequelize.sync()
 app.get('/', (req, res) => {
     res.send('Api funcionando :D');
 });
+app.use("/api/movies", moviesRouters);

@@ -47,7 +47,7 @@ export const getMoviesID = async (req, res)=> {
         res.status(500).json ({ message: "Error interno del servidor el titulo por ID.. ups" });
     }
 };
-export const characterUpdate = async (req, res)=> {
+export const movieUpdate = async (req, res)=> {
     const { id } = req.params;
     const { title, director, duration, genre, description } = req.body;
     try{
