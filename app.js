@@ -7,7 +7,9 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-const PORT=process.env.BD_PORT;
+
+const PORT = process.env.PORT
+
 sequelize.sync()
     .then(() => {
         console.log("Base de datos conectada correctamente :D");
@@ -18,7 +20,9 @@ sequelize.sync()
     .catch((err) => {
         console.error("Error al conectarse con la BD :(... lo siento", err);
     });
+
 app.get('/', (req, res) => {
     res.send('Api funcionando :D');
 });
+
 app.use("/api/movies", moviesRouters);

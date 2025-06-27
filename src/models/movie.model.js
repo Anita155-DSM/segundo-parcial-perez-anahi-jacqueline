@@ -24,4 +24,5 @@ const movies = sequelize.define('movies', {
         allowNull: true
     }
 });
+
 export default movies;

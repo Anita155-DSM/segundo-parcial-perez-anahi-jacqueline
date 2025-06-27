@@ -1,6 +1,7 @@
 import movies from "../models/movie.model.js";
+
 export const createMovie = async (req, res) => {
-    const { title, director, duration, genre } = req.body;
+    const { title, director, duration, genre, description } = req.body;
     if (!title || !director || !duration || !genre){
         return res.status(400).json ({ message: "Faltan datos obligatorios" });
     }
@@ -11,7 +12,7 @@ export const createMovie = async (req, res) => {
         return res.status(400).json ({ message: "No es válido, el género debe ser cinematográfico" });
     }
     try{
-        const movieExist = await movies.findOne({ title});
+        const movieExist = await movies.findOne({ where: { title } });
         if (movieExist){
             return res.status(400).json ({ message: `La pelicula con ese nombre: '${title}' ya existe.` });
         }
@@ -21,7 +22,8 @@ export const createMovie = async (req, res) => {
         console.error("Error al crear la película... error;", error);
         res.status(500).json ({ message: "Error interno del servidor al crear el titulo" });
     }
-}
+};
+
 export const getAllMovies = async (req, res) => {
     try{
         const allMovies = await movies.findAll();
@@ -34,6 +36,7 @@ export const getAllMovies = async (req, res) => {
         res.status(500).json ({ message: "Error interno del servidor al obtener los titulos" });
     }
 };
+
 export const getMoviesID = async (req, res)=> {
     try{
         const { id } = req.params;
@@ -41,12 +44,13 @@ export const getMoviesID = async (req, res)=> {
         if (!movieExist) {
             return res.status(404).json({ message: `(Not found): Titulo con ID ${id} no exise` });
         }
-        res.status(200).json(movies);
+        res.status(200).json(movieExist);
     }catch (error){
         console.error("Error al titulo por ID:", error);
         res.status(500).json ({ message: "Error interno del servidor el titulo por ID.. ups" });
     }
 };
+
 export const movieUpdate = async (req, res)=> {
     const { id } = req.params;
     const { title, director, duration, genre, description } = req.body;
@@ -65,16 +69,19 @@ export const movieUpdate = async (req, res)=> {
             return res.status(400).json({ message: "El género debe ser cinematografico" });
         }
         const nameUsed = await movies.findOne({ where: {title} });
-        if (nameUsed && nameUsed.id !== movies.id) {
-            return res.status(400).json({ message: `Ya existe un personaje con el nombre '${name}' !!! OJO` });
+        if (nameUsed && nameUsed.id !== movie.id) {
+            return res.status(400).json({ message: `Ya existe un personaje con el nombre '${title}' !!! OJO` });
         }
-        await movies.update({ title, duration, director, genre, description });
-        return res.status(200).json({ message: "title actualizado exitosamente", movie }); // Retornar el personaje actualizado
+        await movies.update({ title, duration, director, genre, description }, {
+            where: { id }
+        });
+        return res.status(200).json({ message: "title actualizado exitosamente", movie });
     }catch(error) {
         console.error("Error al actualizar el la movie:", error);
         return res.status(500).json({ message: 'Error interno del servidor al actualizar la movie D:' });
     }
 };
+
 export const movieDelete = async (req, res) => {
     const { id } = req.params;
     try {
@@ -88,4 +95,4 @@ export const movieDelete = async (req, res) => {
         console.error("Error al eliminar la movie... el error es:", error);
         res.status(500).json({ message: 'Error interno al eliminar la movie' });
     }
-}
+};
